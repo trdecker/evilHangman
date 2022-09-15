@@ -10,6 +10,8 @@
 package hangman;
 
 import java.io.*;
+import java.util.HashSet;
+import java.util.Set;
 import java.util.SortedSet;
 
 /**
@@ -62,7 +64,11 @@ public class Main {
             e.printStackTrace();
         }
 
+        boolean success = true;
+        Set<String> possibleWords = new HashSet<>();
+
         while (remainingGuesses > 0) {
+            boolean correctLetter = false;
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
                 System.out.println("You have " + remainingGuesses + " left");
@@ -97,19 +103,45 @@ public class Main {
                     }
                     // Check for the letter. This will also update the Set<String> currWords(?).
                     try {
-                        evilHangmanGame.makeGuess(guess.charAt(0));
+                        possibleWords = evilHangmanGame.makeGuess(guess.charAt(0));
+                        String key = possibleWords.toArray()[0].toString();
+                        // Update the answer
+                        for (int i = 0; i < key.length(); i++) {
+                            if (key.substring(i, i + 1).equals(guess)) {
+                                answer.replace(i,i+1,guess);
+                                correctLetter = true;
+                            }
+                        }
                         validLetter = true;
                     } catch(GuessAlreadyMadeException e) {
                         System.out.println("You already used that letter");
                         validLetter = false;
                     }
+
+                    // Output if bad guess
+                    if (!correctLetter && validLetter)
+                        System.out.println("Sorry, there are no " + guess + "'s");
                 }
                 while (!validLetter);
             } catch (IOException e) {
                 System.out.println("Bad input!");
                 e.printStackTrace();
             }
+
+
             remainingGuesses--;
+        }
+
+        for (Character letter : answer.toString().toCharArray()) {
+            if (letter == '_') {
+                success = false;
+                break;
+            }
+        }
+
+        if (!success) {
+            System.out.println("You lose!");
+            System.out.println("The word: " + possibleWords.toArray()[0].toString());
         }
     }
 }
