@@ -1,9 +1,15 @@
+/**
+ * @File: Main.java
+ * @Author: Tad Decker
+ * @Date: 9-13-2022
+ * ...
+ * C S 240
+ * Rodham
+ */
+
 package hangman;
 
 import java.io.*;
-import java.util.*;
-import hangman.EmptyDictionaryException;
-
 
 /**
  * 1. Args: String dictionary Integer >=2 wordLength Integer >= 1 guesses
@@ -35,13 +41,11 @@ import hangman.EmptyDictionaryException;
  *            4. else choose the group with the next most right-most letter and REPEAT STEP 4
  */
 public class Main {
-    Integer remainingGuesses;
-
     public static void main(String[] args) {
         String fileName = args[0];
         File dictionary = new File(fileName);
-        Integer wordLength = Integer.parseInt(args[1]); // >= 2
-        Integer remainingGuesses = Integer.parseInt(args[2]); // >= 1
+        int wordLength = Integer.parseInt(args[1]); // >= 2
+        int remainingGuesses = Integer.parseInt(args[2]); // >= 1
 
         // Initialize game
         EvilHangmanGame evilHangmanGame = new EvilHangmanGame();
@@ -54,31 +58,43 @@ public class Main {
             e.printStackTrace();
         }
 
-        ArrayList<Character> guessedLetters = new ArrayList<>();
         while (remainingGuesses > 0) {
-            userInput();
-            remainingGuesses--;
-        }
-    }
+            try {
+                BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
+                System.out.println("REMAINING GUESSES: " + remainingGuesses);
+                System.out.println("Enter guess:");
+                String guess;
 
-    private void userInput() {
-        try {
-            BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-            System.out.println("REMAINING GUESSES: " + remainingGuesses);
-            System.out.println("Enter guess:");
-            String guess = reader.readLine();
-            while (guess.length() > 1 || Character.isLetter(guess.charAt(0))) {
-                if (guess.length() > 1)
-                    System.out.println("Guess must be one letter.");
-                if (Character.isLetter(guess.charAt(0)))
-                    System.out.println("Guess must be an uppercase or lowercase letter.");
-                guess = reader.readLine();
+                // Iterate until user submits a Character that is valid.
+                boolean validLetter;
+                do {
+                    guess = reader.readLine();
+                    guess = guess.toLowerCase();
+                    if (guess.length() == 0) {
+                        System.out.println("Invalid input");
+                        validLetter = false;
+                        continue;
+                    }
+                    else if (guess.length() > 1 || !Character.isLetter(guess.charAt(0))) {
+                        System.out.println("Invalid input");
+                        validLetter = false;
+                        continue;
+                    }
+                    // Check for the letter. This will also update the Set<String> currWords(?).
+                    try {
+                        evilHangmanGame.makeGuess(guess.charAt(0));
+                        validLetter = true;
+                    } catch(GuessAlreadyMadeException e) {
+                        System.out.println("You already used that letter");
+                        validLetter = false;
+                    }
+                }
+                while (!validLetter);
+            } catch (IOException e) {
+                System.out.println("Bad input!");
+                e.printStackTrace();
             }
-            guess = guess.toLowerCase();
             remainingGuesses--;
-        } catch (IOException e) {
-            System.out.println("Bad input!");
-            e.printStackTrace();
         }
     }
 }
