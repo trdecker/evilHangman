@@ -10,6 +10,7 @@
 package hangman;
 
 import java.io.*;
+import java.util.SortedSet;
 
 /**
  * 1. Args: String dictionary Integer >=2 wordLength Integer >= 1 guesses
@@ -47,6 +48,9 @@ public class Main {
         int wordLength = Integer.parseInt(args[1]); // >= 2
         int remainingGuesses = Integer.parseInt(args[2]); // >= 1
 
+        StringBuilder answer = new StringBuilder(wordLength);
+        answer.append("_".repeat(Math.max(0, wordLength)));
+
         // Initialize game
         EvilHangmanGame evilHangmanGame = new EvilHangmanGame();
 
@@ -61,7 +65,18 @@ public class Main {
         while (remainingGuesses > 0) {
             try {
                 BufferedReader reader = new BufferedReader(new InputStreamReader(System.in));
-                System.out.println("REMAINING GUESSES: " + remainingGuesses);
+                System.out.println("You have " + remainingGuesses + " left");
+                // Print guessed letters
+                SortedSet<Character> guessedLetters = evilHangmanGame.getGuessedLetters();
+                StringBuilder usedLetters = new StringBuilder();
+                usedLetters.append("Used letters:");
+                for (Character letter : guessedLetters) {
+                    usedLetters.append(" ").append(letter);
+                }
+                System.out.println(usedLetters);
+                // Print word
+                System.out.println("Word: " + answer);
+
                 System.out.println("Enter guess:");
                 String guess;
 
