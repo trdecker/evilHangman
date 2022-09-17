@@ -21,6 +21,7 @@ public class EvilHangmanGame implements IEvilHangmanGame {
      */
     @Override
     public void startGame(File dictionary, int wordLength) throws IOException, EmptyDictionaryException {
+        possibleWords = new HashSet<>();
         // Scan file for words
         Scanner scanner = new Scanner(dictionary);
         while (scanner.hasNext()) {
@@ -50,6 +51,7 @@ public class EvilHangmanGame implements IEvilHangmanGame {
     @Override
     public Set<String> makeGuess(char guess) throws GuessAlreadyMadeException {
         // This is where the evil algorithm happens!
+        guess = java.lang.Character.toLowerCase(guess);
         if (guessedLetters.contains(guess)) {
             throw new GuessAlreadyMadeException();
         } else {
@@ -176,17 +178,19 @@ public class EvilHangmanGame implements IEvilHangmanGame {
                         largestGroup = currGroup;
                     else if (newIndex == oldIndex) {
                         do {
-                            for (; oldIndex < keyOld.length(); oldIndex++) {
+                            for (oldIndex++; oldIndex < keyOld.length(); oldIndex++) {
                                 if (keyOld.charAt(oldIndex) == guess) {
                                     break;
                                 }
                             }
-                            for (; newIndex < keyOld.length(); newIndex++) {
+                            for (newIndex++; newIndex < keyOld.length(); newIndex++) {
                                 if (keyNew.charAt(newIndex) == guess) {
                                     break;
                                 }
                             }
                         } while (oldIndex == newIndex);
+                        if (newIndex > oldIndex)
+                            largestGroup = currGroup;
                     }
 
                 }
