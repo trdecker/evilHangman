@@ -133,6 +133,7 @@ public class Main {
                     // Output if bad guess
                     if (!correctLetter && validLetter)
                         System.out.println("Sorry, there are no " + guess + "'s");
+
                 }
                 while (!validLetter);
             } catch (IOException e) {
@@ -142,16 +143,16 @@ public class Main {
 
             if (success) break;
 
-            remainingGuesses--;
+            if (!correctLetter)
+                remainingGuesses--;
         }
 
         if (!success) {
             System.out.println("You lose!");
-            System.out.println("The word: " + possibleWords.toArray()[0].toString());
         }
         else {
             System.out.println("Congrats! You win.");
-            System.out.println("The word: " + possibleWords.toArray()[0].toString());
         }
+        System.out.println("The word: " + possibleWords.toArray()[0].toString());
     }
 }
