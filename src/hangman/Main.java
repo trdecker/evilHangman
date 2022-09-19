@@ -151,6 +151,7 @@ public class Main {
         }
         else {
             System.out.println("Congrats! You win.");
+            System.out.println("The word: " + possibleWords.toArray()[0].toString());
         }
     }
 }
