@@ -118,6 +118,18 @@ public class Main {
                         validLetter = false;
                     }
 
+                    success = false;
+                    for (Character letter : answer.toString().toCharArray()) {
+                        if (letter != '_') {
+                            success = true;
+                        }
+                        else {
+                            success = false;
+                            break;
+                        }
+                    }
+                    if (success) break;
+
                     // Output if bad guess
                     if (!correctLetter && validLetter)
                         System.out.println("Sorry, there are no " + guess + "'s");
@@ -128,20 +140,17 @@ public class Main {
                 e.printStackTrace();
             }
 
+            if (success) break;
 
             remainingGuesses--;
-        }
-
-        for (Character letter : answer.toString().toCharArray()) {
-            if (letter == '_') {
-                success = false;
-                break;
-            }
         }
 
         if (!success) {
             System.out.println("You lose!");
             System.out.println("The word: " + possibleWords.toArray()[0].toString());
+        }
+        else {
+            System.out.println("Congrats! You win.");
         }
     }
 }
